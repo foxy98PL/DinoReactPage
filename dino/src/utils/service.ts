@@ -3,3 +3,9 @@ export async function fetchData() {
   const data = await response.json();
   return data;
 }
+
+export const myEmptyDinoArray = Array.from({ length: 40 }, () => ({
+  walletaddress: "empty",
+  ethervalue: "empty",
+  value: "empty",
+}));

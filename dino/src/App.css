@@ -3,17 +3,26 @@ body {
   padding: 0;
   background-color: #274540;
   font-family: "Balsamiq Sans", cursive;
+  background: url(./assetsDino/cloud-bg.png) no-repeat center;
+  background-size: 100% 100vh;
 }
 
 .dinoPage {
-  max-width: 1000px;
-  margin: 0 auto;
   border-radius: 50px 50px 0 0;
-  background-color: #38625a;
   color: white;
 }
 
 .dinoPageTitle {
-    font-size: 45px;
-    text-align: center;
+  margin: 0 auto;
+  font-size: 45px;
+  text-align: center;
+  background-color:#274540;
+  max-width: 800px;
+  border-radius: 10px 10px 0 0;
+}
+
+@media (max-width: 1600px) {
+  .dinoPageTitle {
+    font-size: 30px;
+  }
 }
