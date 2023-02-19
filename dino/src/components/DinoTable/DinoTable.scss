@@ -8,29 +8,43 @@
   max-width: 800px;
   margin: 0 auto;
   background-color: var(--color1);
-  border-radius: 15px 15px 0 0;
+  border-radius: 15px 15px 15px 15px;
+  padding-bottom: 10px;
   top: 10px;
+
+  .cell:not(:first-child):not(:last-child) {
+    border-left: solid 2px var(--color3);
+  }
 
   .dinoTable_2_wrapper {
     max-height: 740px;
     overflow: overlay;
+
+    .cell:not(:first-child):not(:last-child) {
+      border-left: solid 2px var(--color3);
+      cursor: pointer;
+    }
+
+    .row:hover {
+      background-color: var(--color4);
+    }
   }
 
   .dinoTable_2_wrapper::-webkit-scrollbar {
     width: 5px;
-    position: absolute;
   }
 
   .dinoTable_2_wrapper::-webkit-scrollbar-track {
     background-color: var(--color1);
+    border-radius: 20px;
   }
 
   .dinoTable_2_wrapper::-webkit-scrollbar-thumb {
     background-color: var(--color2);
-    border-radius: 10px;
+    border-radius: 30px;
   }
 
-  .dinoTable_2_wrappe::-webkit-scrollbar-thumb:hover {
+  .dinoTable_2_wrapper::-webkit-scrollbar-thumb:hover {
     background-color: var(--color2);
   }
 
@@ -48,18 +62,15 @@
     width: 100%;
   }
 
-  .row:hover {
-    background-color: var(--color4);
-  }
-
   .cell {
     display: table-cell;
     padding: 10px;
     overflow: hidden;
+    vertical-align: middle;
   }
 
   .cell:first-child {
-    width: 180px;
+    width: 80px;
   }
   #row_header {
     border-bottom: solid 2px var(--color3);
@@ -71,21 +82,10 @@
 
   .cell:last-child {
     text-align: center;
-    width: 60px;
-  }
-
-  .cell:first-child {
-    cursor: pointer;
-  }
-
-  .cell:nth-child(3) {
-    text-align: center;
-    border-right: solid 2px var(--color3);
-  }
-
-  .cell:not(:first-child):not(:last-child) {
+    width: 150px;
     border-left: solid 2px var(--color3);
   }
+
   .header {
     font-weight: bold;
   }
@@ -117,14 +117,6 @@
       margin: 0 auto;
     }
 
-    .cell:nth-child(2) {
-      width: 80px;
-    }
-
-    .cell:nth-child(3) {
-      width: 60px;
-    }
-
     .dinoLeader {
       display: none;
     }
@@ -151,18 +143,14 @@
     }
 
     .cell:first-child {
-      width: auto;
+      width: 80px;
     }
 
     .cell:last-child {
-      width: auto;
+      width: 100px;
     }
 
     .cell:nth-child(2) {
-      width: auto;
-    }
-
-    .cell:nth-child(3) {
       width: auto;
     }
 
