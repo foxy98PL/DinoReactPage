@@ -12,6 +12,41 @@
   padding-bottom: 10px;
   top: 10px;
 
+  &_ranges {
+    display: flex;
+    flex-direction: row;
+    padding: 15px 30px 30px 30px;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    
+    .ranges_calendars {
+      gap: 15px;
+      display: flex;
+    }
+
+    .ranges_buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    &_button{
+      cursor: pointer;
+      &:hover {
+        background-color: #274540;
+      }
+      margin-top: 20px;
+      width: 90px;
+      height: 60px;
+      font-size: 20px;
+      color:#fff;
+      background-color: #38625a;
+      border: 1px white solid;
+      border-radius: 15px;
+    }
+  }
+
   .cell:not(:first-child):not(:last-child) {
     border-left: solid 2px var(--color3);
   }
@@ -98,7 +133,7 @@
 
   .cell_copy {
     display: grid;
-    grid-template-columns: 1fr 40px;
+    grid-template-columns: 1fr 40px 40px;
     column-gap: 10px;
   }
 
@@ -140,7 +175,7 @@
     position: absolute;
     height: 100%;
     z-index: -1;
-    transform: translate(13%, 0);
+    transform: translate(2%, 0);
   }
 
   .dinoTail {
@@ -166,6 +201,10 @@
   .copy_button {
     background-color: var(--color1);
     border: none;
+    z-index: 99;
+    #etherscan_icon{
+      filter: invert(0);
+    }
     &:hover {
       cursor: pointer;
     }
@@ -179,6 +218,7 @@
   .copy_button2 {
     background-color: var(--color4);
     border: none;
+    z-index: 99;
     &:hover {
       cursor: pointer;
     }
@@ -189,7 +229,7 @@
     }
   }
 
-  @media (max-width: 1600px) {
+  @media (max-width: 1500px) {
     .dinoTable_wrapper {
       max-width: 500px;
       margin: 0 auto;
@@ -210,6 +250,29 @@
     .dinoTable_wrapper {
       max-width: 350px;
       margin: 0 auto;
+    }
+
+    &_ranges {
+    
+      .ranges_calendars {
+        display: flex;
+        flex-direction: column;
+      }
+  
+      .ranges_buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        margin-top: 5px;
+      }
+      &_button{
+        margin-top: 0;
+        width: 90px;
+        height: 50px;
+        font-size: 20px;
+        border: 1px white solid;
+        border-radius: 10px;
+      }
     }
 
     .dinoTable_wrapper {

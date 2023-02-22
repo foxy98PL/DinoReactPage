@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import "./DinoTable.scss";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
@@ -8,23 +9,47 @@ import "react-toastify/dist/ReactToastify.css";
 import Rank from "../RankComponent/Rank";
 import Loader from "../Loader/Loader";
 import Calendar from "../Calendar/Calendar";
+import { fetchData } from "../../utils/service";
 
 const DinoTable = () => {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<any>([]);
-  const [dataF, setDataF] = useState<string>("2023-02-18");
-  const [dataT, setDataT] = useState<string>("2023-02-19");
+  const [dataF, setDataF] = useState<string>(
+    dayjs().add(-1, "month").format("YYYY-MM-DD")
+  );
+  const [dataT, setDataT] = useState<string>(
+    dayjs().add(1, "day").format("YYYY-MM-DD")
+  );
   const [dataFrom, setDataFrom] = useState<Dayjs | null>(dayjs(dataF));
   const [dataTo, setDataTo] = useState<Dayjs | null>(dayjs(dataT));
 
-  const fetchPath = `http://localhost:6060/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
+  useEffect(() => {
+    const fetchPath = `http://localhost:6060/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
+    async function getData() {
+      const result = await fetchData(fetchPath);
+      setData(result);
+      setIsLoading(false);
+    }
 
-  async function fetchData() {
-    const response = await fetch(fetchPath);
-    const data = await response.json();
-    return data.sortedArr;
-  }
+    getData();
+  }, [dataT, dataF]);
+
+  useEffect(() => {
+    if (dataTo) {
+      setDataT(dataTo.format("YYYY-MM-DD"));
+    }
+    if (dataFrom) {
+      setDataF(dataFrom.format("YYYY-MM-DD"));
+    }
+    if (dataTo != null && dataFrom != null) {
+      if (dataTo < dataFrom) {
+        setDataT(dayjs().format("YYYY-MM-DD"));
+        setDataF(dayjs().add(-1, "month").format("YYYY-MM-DD"));
+        toast.error("Incorrect Date, please try a different one");
+      }
+    }
+  }, [dataTo, dataFrom]);
 
   const handleRowExpand = (rowId: number) => {
     const isRowExpanded = expandedRows.includes(rowId);
@@ -40,51 +65,78 @@ const DinoTable = () => {
     setExpandedRows(newExpandedRows);
   };
 
-  const handleCopy = (value: string) => {
+  const handleCopy = (value: string, event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     navigator.clipboard.writeText(value);
     toast.success(`Copied to clipboard: ${value}`);
   };
 
-  console.log(dataT);
+  const handleRedirect = (
+    value: string,
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(`https://etherscan.io/address/${value}`);
+  };
 
-  useEffect(() => {
-    if (dataTo) {
-      setDataT(dataTo.format("YYYY-MM-DD"));
+  const handleDate = (type: string) => {
+    if (type === "allTime") {
+      setDataTo(dayjs().add(1, "day"));
+      setDataFrom(dayjs("01/01/2023"));
     }
-    if (dataFrom) {
-      setDataF(dataFrom.format("YYYY-MM-DD"));
+    if (type === "daily") {
+      setDataTo(dayjs().add(1, "day"));
+      setDataFrom(dayjs());
     }
-    if (dataTo != null && dataFrom != null) {
-      if (dataTo <= dataFrom) {
-        setDataT("2023-02-19");
-      }
-      if (dataFrom >= dataFrom) {
-        setDataF("2023-02-18");
-      }
+
+    if (type === "monthly") {
+      setDataTo(dayjs().add(1, "day"));
+      setDataFrom(dayjs().add(-1, "month"));
     }
-    async function getData() {
-      const result = await fetchData();
-      setData(result);
-      setIsLoading(false);
-    }
-    getData();
-  }, [fetchPath]);
+  };
 
   const dinoLeader = require("../../assetsDino/dinoLeader.png");
   const dinoTail = require("../../assetsDino/dinoTail.png");
   const arrowUp = require("../../assetsDino/arrowUp.png");
   const copyIcon = require("../../assetsDino/copyIcon.png");
+  const etherscanIcon = require("../../assetsDino/etherscanIcon.png");
 
   return (
     <>
       {!isLoading && (
         <div className="dinoTable_wrapper">
-          <Calendar
-            setData={setDataFrom}
-            displayData={dataFrom}
-            message="From"
-          />
-          <Calendar setData={setDataTo} displayData={dataTo} message="To" />
+          <div className="dinoTable_wrapper_ranges">
+            <div className="ranges_buttons">
+              <button
+                className="dinoTable_wrapper_ranges_button"
+                onClick={() => handleDate("allTime")}
+              >
+                All time
+              </button>
+              <button
+                className="dinoTable_wrapper_ranges_button"
+                onClick={() => handleDate("daily")}
+              >
+                Daily
+              </button>
+              <button
+                className="dinoTable_wrapper_ranges_button"
+                onClick={() => handleDate("monthly")}
+              >
+                Monthly
+              </button>
+            </div>
+            <div className="ranges_calendars">
+              <Calendar
+                setData={setDataFrom}
+                displayData={dataFrom}
+                message="From"
+              />
+              <Calendar setData={setDataTo} displayData={dataTo} message="To" />
+            </div>
+          </div>
           <div className="dinoFull">
             <img className="dinoTail" alt="tail" src={dinoTail} />
             <img className="dinoLeader" alt="character" src={dinoLeader} />
@@ -103,7 +155,7 @@ const DinoTable = () => {
                   <>
                     <div
                       className="row"
-                      key={index}
+                      key={uuidv4()}
                       onClick={() => handleRowExpand(index)}
                     >
                       <div className="cell">
@@ -115,7 +167,22 @@ const DinoTable = () => {
                             {item.walletAddress}
                           </div>
                           <button
-                            onClick={() => handleCopy(item.walletAddress)}
+                            onClick={(event: React.MouseEvent<HTMLElement>) =>
+                              handleRedirect(item.walletAddress, event)
+                            }
+                            className="copy_button"
+                          >
+                            <img
+                              className="copy_button_icon"
+                              id="etherscan_icon"
+                              src={etherscanIcon}
+                              alt="etherscan"
+                            />
+                          </button>
+                          <button
+                            onClick={(event: React.MouseEvent<HTMLElement>) =>
+                              handleCopy(item.walletAddress, event)
+                            }
                             className="copy_button"
                           >
                             <img
@@ -157,7 +224,7 @@ const DinoTable = () => {
                             <div
                               className="row"
                               id="row_history"
-                              key={historyItem.transactionhash}
+                              key={uuidv4()}
                             >
                               <div className="cell"></div>
                               <div className="cell">
@@ -166,8 +233,13 @@ const DinoTable = () => {
                                     {historyItem.transactionhash}
                                   </div>
                                   <button
-                                    onClick={() =>
-                                      handleCopy(historyItem.transactionhash)
+                                    onClick={(
+                                      event: React.MouseEvent<HTMLElement>
+                                    ) =>
+                                      handleCopy(
+                                        historyItem.transactionhash,
+                                        event
+                                      )
                                     }
                                     className="copy_button2"
                                   >
