@@ -36,6 +36,17 @@
       &:hover {
         background-color: #274540;
       }
+      &_active{
+        cursor: pointer;
+        background-color: #274540;
+        margin-top: 20px;
+        width: 90px;
+        height: 60px;
+        font-size: 20px;
+        color:#fff;
+        border: 1px white solid;
+        border-radius: 15px;
+      }
       margin-top: 20px;
       width: 90px;
       height: 60px;

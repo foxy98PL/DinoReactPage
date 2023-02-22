@@ -25,14 +25,14 @@ const Calendar: React.FC<CalendarModel> = ({
     fontFamily: '"Balsamiq Sans", cursive;',
     border: "solid 1px #fff",
     width: "160px",
-    '& label.Mui-focused': {
-      color: 'white',
+    "& label.Mui-focused": {
+      color: "white",
     },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: 'yellow',
+    "& .MuiInput-underline:after": {
+      borderBottomColor: "yellow",
     },
-    "&:hover":{
-        backgroundColor: "#274540",
+    "&:hover": {
+      backgroundColor: "#274540",
     },
     "& .MuiInputBase-root": {
       color: "#fff",

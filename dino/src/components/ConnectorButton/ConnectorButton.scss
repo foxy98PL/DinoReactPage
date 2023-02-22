@@ -1,0 +1,12 @@
+.connector {
+  position: absolute;
+  z-index: 999;
+  top: 15px;
+  right: 20px;
+}
+
+@media (max-width: 1150px) {
+    .connector {
+    }
+}
+  

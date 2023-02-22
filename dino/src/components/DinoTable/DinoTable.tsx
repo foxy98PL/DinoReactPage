@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import "./DinoTable.scss";
 import { Dayjs } from "dayjs";
@@ -15,6 +15,12 @@ const DinoTable = () => {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<any>([]);
+  const [activeFilter, setActiveFilter] = useState("");
+  const allTimeDate = '11/11/2022';
+
+  const handleFilterClick = (filter: string) => {
+    setActiveFilter(filter);
+  };
   const [dataF, setDataF] = useState<string>(
     dayjs().add(-1, "month").format("YYYY-MM-DD")
   );
@@ -48,6 +54,16 @@ const DinoTable = () => {
         setDataF(dayjs().add(-1, "month").format("YYYY-MM-DD"));
         toast.error("Incorrect Date, please try a different one");
       }
+    }
+    setActiveFilter("none");
+    if(dataTo?.format("YYYY-MM-DD") === dataFrom?.add(1, 'day').format("YYYY-MM-DD")) {
+      setActiveFilter("filter2");
+    }
+    if((dataTo?.add(-1, "day").format("YYYY-MM-DD") === dataFrom?.add(1, "month").format("YYYY-MM-DD") )){
+      setActiveFilter("filter3");
+    }
+    if((dataTo?.format("YYYY-MM-DD") === dayjs().add(1,'day').format("YYYY-MM-DD")) && (dataFrom?.format("YYYY-MM-DD") === dayjs(allTimeDate).format("YYYY-MM-DD"))){ 
+      setActiveFilter("filter1");
     }
   }, [dataTo, dataFrom]);
 
@@ -84,16 +100,19 @@ const DinoTable = () => {
   const handleDate = (type: string) => {
     if (type === "allTime") {
       setDataTo(dayjs().add(1, "day"));
-      setDataFrom(dayjs("01/01/2023"));
+      setDataFrom(dayjs(allTimeDate));
+      handleFilterClick("filter1");
     }
     if (type === "daily") {
       setDataTo(dayjs().add(1, "day"));
       setDataFrom(dayjs());
+      handleFilterClick("filter2");
     }
 
     if (type === "monthly") {
       setDataTo(dayjs().add(1, "day"));
       setDataFrom(dayjs().add(-1, "month"));
+      handleFilterClick("filter3");
     }
   };
 
@@ -110,19 +129,31 @@ const DinoTable = () => {
           <div className="dinoTable_wrapper_ranges">
             <div className="ranges_buttons">
               <button
-                className="dinoTable_wrapper_ranges_button"
+                className={
+                  activeFilter === "filter1"
+                    ? "dinoTable_wrapper_ranges_button_active"
+                    : "dinoTable_wrapper_ranges_button"
+                }
                 onClick={() => handleDate("allTime")}
               >
                 All time
               </button>
               <button
-                className="dinoTable_wrapper_ranges_button"
+                className={
+                  activeFilter === "filter2"
+                    ? "dinoTable_wrapper_ranges_button_active"
+                    : "dinoTable_wrapper_ranges_button"
+                }
                 onClick={() => handleDate("daily")}
               >
                 Daily
               </button>
               <button
-                className="dinoTable_wrapper_ranges_button"
+                className={
+                  activeFilter === "filter3"
+                    ? "dinoTable_wrapper_ranges_button_active"
+                    : "dinoTable_wrapper_ranges_button"
+                }
                 onClick={() => handleDate("monthly")}
               >
                 Monthly
@@ -134,7 +165,11 @@ const DinoTable = () => {
                 displayData={dataFrom}
                 message="From"
               />
-              <Calendar setData={setDataTo} displayData={dataTo} message="To" />
+              <Calendar
+                setData={setDataTo}
+                displayData={dataTo}
+                message="To"
+              />
             </div>
           </div>
           <div className="dinoFull">
@@ -152,18 +187,18 @@ const DinoTable = () => {
             <div className="dinoTable">
               {data.map((item: DinoTableModel, index: number) => {
                 return (
-                  <>
+                  <React.Fragment key={uuidv4()}>
                     <div
                       className="row"
                       key={uuidv4()}
                       onClick={() => handleRowExpand(index)}
                     >
-                      <div className="cell">
-                        <Rank score={index + 1} />
+                      <div className="cell" key={uuidv4()}>
+                        <Rank score={index + 1} key={uuidv4()} />
                       </div>
-                      <div className="cell">
-                        <div className="cell_copy">
-                          <div className="wallet_address">
+                      <div className="cell" key={uuidv4()}>
+                        <div className="cell_copy" key={uuidv4()}>
+                          <div className="wallet_address" key={uuidv4()}>
                             {item.walletAddress}
                           </div>
                           <button
@@ -171,12 +206,14 @@ const DinoTable = () => {
                               handleRedirect(item.walletAddress, event)
                             }
                             className="copy_button"
+                            key={uuidv4()}
                           >
                             <img
                               className="copy_button_icon"
                               id="etherscan_icon"
                               src={etherscanIcon}
                               alt="etherscan"
+                              key={uuidv4()}
                             />
                           </button>
                           <button
@@ -184,16 +221,18 @@ const DinoTable = () => {
                               handleCopy(item.walletAddress, event)
                             }
                             className="copy_button"
+                            key={uuidv4()}
                           >
                             <img
                               className="copy_button_icon"
                               src={copyIcon}
                               alt="copyIcon"
+                              key={uuidv4()}
                             />
                           </button>
                         </div>
                       </div>
-                      <div className="cell">
+                      <div className="cell" key={uuidv4()}>
                         {Number(item.totalEther).toFixed(3)}
                       </div>
                     </div>
@@ -202,22 +241,28 @@ const DinoTable = () => {
                         <div
                           className="row"
                           id="row_history_header"
-                          key={item.walletAddress}
+                          key={uuidv4()}
                         >
-                          <div className="cell">
+                          <div className="cell" key={uuidv4()}>
                             <button
                               onClick={() => handleRowHide(index)}
                               className="arrow_up_button"
+                              key={uuidv4()}
                             >
                               <img
                                 className="arrow_up"
                                 src={arrowUp}
                                 alt="arrowUp"
+                                key={uuidv4()}
                               />
                             </button>
                           </div>
-                          <div className="cell">Transaction hash</div>
-                          <div className="cell">Total Value</div>
+                          <div className="cell" key={uuidv4()}>
+                            Transaction hash
+                          </div>
+                          <div className="cell" key={uuidv4()}>
+                            Total Value
+                          </div>
                         </div>
                         {item.buyData.map((historyItem: buyDataModel) => {
                           return (
@@ -226,13 +271,17 @@ const DinoTable = () => {
                               id="row_history"
                               key={uuidv4()}
                             >
-                              <div className="cell"></div>
-                              <div className="cell">
-                                <div className="cell_copy">
-                                  <div className="wallet_address">
+                              <div className="cell" key={uuidv4()}></div>
+                              <div className="cell" key={uuidv4()}>
+                                <div className="cell_copy" key={uuidv4()}>
+                                  <div
+                                    className="wallet_address"
+                                    key={uuidv4()}
+                                  >
                                     {historyItem.transactionhash}
                                   </div>
                                   <button
+                                    key={uuidv4()}
                                     onClick={(
                                       event: React.MouseEvent<HTMLElement>
                                     ) =>
@@ -244,6 +293,7 @@ const DinoTable = () => {
                                     className="copy_button2"
                                   >
                                     <img
+                                      key={uuidv4()}
                                       className="copy_button2_icon2"
                                       src={copyIcon}
                                       alt="copyIcon"
@@ -251,7 +301,7 @@ const DinoTable = () => {
                                   </button>
                                 </div>
                               </div>
-                              <div className="cell">
+                              <div className="cell" key={uuidv4()}>
                                 {Number(historyItem.ether).toFixed(5)}
                               </div>
                             </div>
@@ -259,7 +309,7 @@ const DinoTable = () => {
                         })}
                       </>
                     )}
-                  </>
+                  </React.Fragment>
                 );
               })}
             </div>
@@ -267,6 +317,7 @@ const DinoTable = () => {
           <ToastContainer
             toastStyle={{ backgroundColor: "#38625a", color: "#fff" }}
             autoClose={1500}
+            key={uuidv4()}
           />
         </div>
       )}
