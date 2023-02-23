@@ -210,7 +210,7 @@ const DinoTable = () => {
                       <Rank score={Number(walletAddress.rank)} />
                     </td>
                     <td className="cell">
-                      <td className="cell_copy">
+                      <div className="cell_copy">
                         <td className="wallet_address" key={uuidv4()}>
                           {walletAddress.address}
                         </td>
@@ -241,7 +241,7 @@ const DinoTable = () => {
                             key={uuidv4()}
                           />
                         </button>
-                      </td>
+                      </div>
                     </td>
                     <td className="cell">
                       {Number(walletAddress.ethervalue).toFixed(3)}
