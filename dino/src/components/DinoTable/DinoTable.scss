@@ -76,6 +76,36 @@
         background-color: var(--color4);
       }
     }
+    
+    .history_table {
+      overflow-y: overlay;
+      overflow-x: visible;
+      max-height: 130px;
+    }
+
+
+    .history_table::-webkit-scrollbar {
+      width: 10px;
+      margin-right: 2px;
+    }
+  
+    .history_table::-webkit-scrollbar-track {
+      background-color: var(--color4);
+      border-radius: 20px;
+    }
+  
+    .history_table::-webkit-scrollbar-thumb {
+      background-color: var(--color2);
+      border-radius: 30px;
+    }
+  
+    .history_table::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color2);
+    }
+
+  }
+  #history_table {
+    display: table-cell;
   }
 
   .dinoTable_2_wrapper::-webkit-scrollbar {

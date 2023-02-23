@@ -24,34 +24,54 @@ const Rank: React.FC<RankModel> = ({ score }) => {
   };
 
   return (
-    <div className="starWrapper">
-      <div
-        className="star"
-        style={{ backgroundColor: `${checkNumberColor(score)}` }}
-      >
-        <div className="star_score">{score}</div>
-      </div>
-      <svg
-        style={{ visibility: "hidden", position: "absolute" }}
-        width="0"
-        height="0"
-        xmlns="http://www.w3.org/2000/svg"
-        version="1.1"
-      >
-        <defs>
-          <filter id="round">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
-              result="goo"
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-    </div>
+    <>
+      {score < 1000 && (
+        <div className="starWrapper">
+          <div
+            className="star"
+            style={{
+              backgroundColor: `${checkNumberColor(score)}`,
+            }}
+          >
+            <div className="star_score" style={{}}>
+              {score}
+            </div>
+          </div>
+          <svg
+            style={{ visibility: "hidden", position: "absolute" }}
+            width="0"
+            height="0"
+            xmlns="http://www.w3.org/2000/svg"
+            version="1.1"
+          >
+            <defs>
+              <filter id="round">
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation="3"
+                  result="blur"
+                />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
+                  result="goo"
+                />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+              </filter>
+            </defs>
+          </svg>
+        </div>
+      )}
+      {score >= 100 && (
+        <div
+          className="styled_big_score"
+          style={{ backgroundColor: `${checkNumberColor(score)}` }}
+        >
+          {score}
+        </div>
+      )}
+    </>
   );
 };
 

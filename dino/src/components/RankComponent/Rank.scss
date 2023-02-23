@@ -10,8 +10,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 45px;
+  overflow: visible;
   width: 45px;
+  min-height: 45px;
+  max-width: 45px;
   color: #274540;
   border: solid 1px black;
   clip-path: polygon(
@@ -31,4 +33,13 @@
     height: auto;
     width: auto;
   }
+}
+
+.styled_big_score{
+  display: flex;
+  width: auto;
+  color: #274540;
+  justify-content: center;
+  padding: 5px 0 5px 0;
+  border-radius: 15px;
 }

@@ -12,18 +12,3 @@ body {
   color: white;
   height: 100vh;
 }
-
-/* .dinoPageTitle {
-  margin: 0 auto;
-  font-size: 45px;
-  text-align: center;
-  background-color:#274540;
-  max-width: 800px;
-  border-radius: 10px 10px 0 0;
-} */
-
-@media (max-width: 1600px) {
-  .dinoPageTitle {
-    font-size: 30px;
-  }
-}

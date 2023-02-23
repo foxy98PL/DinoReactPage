@@ -3,24 +3,26 @@ import { v4 as uuidv4 } from "uuid";
 import "./DinoTable.scss";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { buyDataModel, DinoTableModel } from "./model";
+import { buyDataModel, DinoTableModel, WalletRank } from "./model";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Rank from "../RankComponent/Rank";
 import Loader from "../Loader/Loader";
 import Calendar from "../Calendar/Calendar";
-import { fetchData } from "../../utils/service";
+import { fetchData, fetchDataLeader } from "../../utils/service";
 
 const DinoTable = () => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<DinoTableModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<any>([]);
   const [activeFilter, setActiveFilter] = useState("");
-  const allTimeDate = '11/11/2022';
+  const [walletAddress, setWalletAddress] = useState<WalletRank | null>(null);
+  const allTimeDate = "11/11/2022";
 
   const handleFilterClick = (filter: string) => {
     setActiveFilter(filter);
   };
+
   const [dataF, setDataF] = useState<string>(
     dayjs().add(-1, "month").format("YYYY-MM-DD")
   );
@@ -29,6 +31,23 @@ const DinoTable = () => {
   );
   const [dataFrom, setDataFrom] = useState<Dayjs | null>(dayjs(dataF));
   const [dataTo, setDataTo] = useState<Dayjs | null>(dayjs(dataT));
+
+  useEffect(() => {
+    async function getData(fetchString: string) {
+      const result = await fetchDataLeader(fetchString);
+      const walletRanks = result.walletRank.map((rank: WalletRank) => ({
+        address: rank.address,
+        ethervalue: rank.ethervalue,
+        rank: rank.rank,
+        value: rank.value,
+      }));
+      setWalletAddress(walletRanks[0]);
+    }
+    const myWalletData = localStorage.getItem("wagmi.store");
+    const parsedWalletData = JSON.parse(myWalletData || "{}");
+    const fetchPathRanking = `http://localhost:6060/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
+    getData(fetchPathRanking);
+  }, [dataF, dataT]);
 
   useEffect(() => {
     const fetchPath = `http://localhost:6060/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
@@ -56,24 +75,28 @@ const DinoTable = () => {
       }
     }
     setActiveFilter("none");
-    if(dataTo?.format("YYYY-MM-DD") === dataFrom?.add(1, 'day').format("YYYY-MM-DD")) {
+    if (
+      dataTo?.format("YYYY-MM-DD") ===
+      dataFrom?.add(1, "day").format("YYYY-MM-DD")
+    ) {
       setActiveFilter("filter2");
     }
-    if((dataTo?.add(-1, "day").format("YYYY-MM-DD") === dataFrom?.add(1, "month").format("YYYY-MM-DD") )){
+    if (
+      dataTo?.add(-1, "day").format("YYYY-MM-DD") ===
+      dataFrom?.add(1, "month").format("YYYY-MM-DD")
+    ) {
       setActiveFilter("filter3");
     }
-    if((dataTo?.format("YYYY-MM-DD") === dayjs().add(1,'day').format("YYYY-MM-DD")) && (dataFrom?.format("YYYY-MM-DD") === dayjs(allTimeDate).format("YYYY-MM-DD"))){ 
+    if (
+      dataTo?.format("YYYY-MM-DD") ===
+        dayjs().add(1, "day").format("YYYY-MM-DD") &&
+      dataFrom?.format("YYYY-MM-DD") === dayjs(allTimeDate).format("YYYY-MM-DD")
+    ) {
       setActiveFilter("filter1");
     }
   }, [dataTo, dataFrom]);
 
   const handleRowExpand = (rowId: number) => {
-    const isRowExpanded = expandedRows.includes(rowId);
-    const newExpandedRows = isRowExpanded ? "" : [...expandedRows, rowId];
-    setExpandedRows(newExpandedRows);
-  };
-
-  const handleRowHide = (rowId: number) => {
     const isRowExpanded = expandedRows.includes(rowId);
     const newExpandedRows = isRowExpanded
       ? expandedRows.filter((id: number) => id !== rowId)
@@ -115,7 +138,6 @@ const DinoTable = () => {
       handleFilterClick("filter3");
     }
   };
-
   const dinoLeader = require("../../assetsDino/dinoLeader.png");
   const dinoTail = require("../../assetsDino/dinoTail.png");
   const arrowUp = require("../../assetsDino/arrowUp.png");
@@ -165,11 +187,7 @@ const DinoTable = () => {
                 displayData={dataFrom}
                 message="From"
               />
-              <Calendar
-                setData={setDataTo}
-                displayData={dataTo}
-                message="To"
-              />
+              <Calendar setData={setDataTo} displayData={dataTo} message="To" />
             </div>
           </div>
           <div className="dinoFull">
@@ -184,19 +202,65 @@ const DinoTable = () => {
             </div>
           </div>
           <div className="dinoTable_2_wrapper">
-            <div className="dinoTable">
+            <table className="dinoTable" id="dinoTable_2">
+              <tbody>
+                {walletAddress && (
+                  <tr className="row">
+                    <td className="cell">
+                      <Rank score={Number(walletAddress.rank)} />
+                    </td>
+                    <td className="cell">
+                      <td className="cell_copy">
+                        <td className="wallet_address" key={uuidv4()}>
+                          {walletAddress.address}
+                        </td>
+                        <button
+                          onClick={(event: React.MouseEvent<HTMLElement>) =>
+                            handleRedirect(walletAddress.address, event)
+                          }
+                          className="copy_button"
+                        >
+                          <img
+                            className="copy_button_icon"
+                            id="etherscan_icon"
+                            src={etherscanIcon}
+                            alt="etherscan"
+                          />
+                        </button>
+                        <button
+                          onClick={(event: React.MouseEvent<HTMLElement>) =>
+                            handleCopy(walletAddress.address, event)
+                          }
+                          className="copy_button"
+                          key={uuidv4()}
+                        >
+                          <img
+                            className="copy_button_icon"
+                            src={copyIcon}
+                            alt="copyIcon"
+                            key={uuidv4()}
+                          />
+                        </button>
+                      </td>
+                    </td>
+                    <td className="cell">
+                      {Number(walletAddress.ethervalue).toFixed(3)}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
               {data.map((item: DinoTableModel, index: number) => {
                 return (
-                  <React.Fragment key={uuidv4()}>
-                    <div
+                  <tbody key={uuidv4()}>
+                    <tr
                       className="row"
                       key={uuidv4()}
                       onClick={() => handleRowExpand(index)}
                     >
-                      <div className="cell" key={uuidv4()}>
+                      <td className="cell" key={uuidv4()}>
                         <Rank score={index + 1} key={uuidv4()} />
-                      </div>
-                      <div className="cell" key={uuidv4()}>
+                      </td>
+                      <td className="cell" key={uuidv4()}>
                         <div className="cell_copy" key={uuidv4()}>
                           <div className="wallet_address" key={uuidv4()}>
                             {item.walletAddress}
@@ -231,21 +295,21 @@ const DinoTable = () => {
                             />
                           </button>
                         </div>
-                      </div>
-                      <div className="cell" key={uuidv4()}>
+                      </td>
+                      <td className="cell" key={uuidv4()}>
                         {Number(item.totalEther).toFixed(3)}
-                      </div>
-                    </div>
+                      </td>
+                    </tr>
                     {expandedRows.includes(index) && (
                       <>
-                        <div
+                        <tr
                           className="row"
                           id="row_history_header"
                           key={uuidv4()}
                         >
-                          <div className="cell" key={uuidv4()}>
+                          <td className="cell" key={uuidv4()}>
                             <button
-                              onClick={() => handleRowHide(index)}
+                              onClick={() => handleRowExpand(index)}
                               className="arrow_up_button"
                               key={uuidv4()}
                             >
@@ -256,63 +320,69 @@ const DinoTable = () => {
                                 key={uuidv4()}
                               />
                             </button>
-                          </div>
-                          <div className="cell" key={uuidv4()}>
+                          </td>
+                          <td className="cell" key={uuidv4()}>
                             Transaction hash
-                          </div>
-                          <div className="cell" key={uuidv4()}>
+                          </td>
+                          <td className="cell" key={uuidv4()}>
                             Total Value
-                          </div>
-                        </div>
-                        {item.buyData.map((historyItem: buyDataModel) => {
-                          return (
-                            <div
-                              className="row"
-                              id="row_history"
-                              key={uuidv4()}
-                            >
-                              <div className="cell" key={uuidv4()}></div>
-                              <div className="cell" key={uuidv4()}>
-                                <div className="cell_copy" key={uuidv4()}>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colSpan={3}>
+                            <div className="history_table">
+                              {item.buyData.map((historyItem: buyDataModel) => {
+                                return (
                                   <div
-                                    className="wallet_address"
+                                    className="row"
+                                    id="row_history"
                                     key={uuidv4()}
                                   >
-                                    {historyItem.transactionhash}
+                                    <div className="cell" key={uuidv4()}></div>
+                                    <div className="cell" key={uuidv4()}>
+                                      <div className="cell_copy" key={uuidv4()}>
+                                        <div
+                                          className="wallet_address"
+                                          key={uuidv4()}
+                                        >
+                                          {historyItem.transactionhash}
+                                        </div>
+                                        <button
+                                          key={uuidv4()}
+                                          onClick={(
+                                            event: React.MouseEvent<HTMLElement>
+                                          ) =>
+                                            handleCopy(
+                                              historyItem.transactionhash,
+                                              event
+                                            )
+                                          }
+                                          className="copy_button2"
+                                        >
+                                          <img
+                                            key={uuidv4()}
+                                            className="copy_button2_icon2"
+                                            src={copyIcon}
+                                            alt="copyIcon"
+                                          />
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div className="cell" key={uuidv4()}>
+                                      {Number(historyItem.ether).toFixed(5)}
+                                    </div>
                                   </div>
-                                  <button
-                                    key={uuidv4()}
-                                    onClick={(
-                                      event: React.MouseEvent<HTMLElement>
-                                    ) =>
-                                      handleCopy(
-                                        historyItem.transactionhash,
-                                        event
-                                      )
-                                    }
-                                    className="copy_button2"
-                                  >
-                                    <img
-                                      key={uuidv4()}
-                                      className="copy_button2_icon2"
-                                      src={copyIcon}
-                                      alt="copyIcon"
-                                    />
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="cell" key={uuidv4()}>
-                                {Number(historyItem.ether).toFixed(5)}
-                              </div>
+                                );
+                              })}
                             </div>
-                          );
-                        })}
+                          </td>
+                        </tr>
                       </>
                     )}
-                  </React.Fragment>
+                  </tbody>
                 );
               })}
-            </div>
+            </table>
           </div>
           <ToastContainer
             toastStyle={{ backgroundColor: "#38625a", color: "#fff" }}
