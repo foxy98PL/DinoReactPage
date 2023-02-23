@@ -293,6 +293,11 @@
       margin: 0 auto;
     }
 
+    .dinoTable_2_wrapper {
+      max-height: 590px;
+    }
+
+
     &_ranges {
     
       .ranges_calendars {
@@ -313,6 +318,16 @@
         font-size: 20px;
         border: 1px white solid;
         border-radius: 10px;
+
+        &_active{
+          background-color: #274540;
+          margin-top: 0;
+          width: 90px;
+          height: 50px;
+          font-size: 20px;
+          border: 1px white solid;
+          border-radius: 10px;
+        }
       }
     }
 
