@@ -31,7 +31,7 @@ const DinoTable = () => {
   );
   const [dataFrom, setDataFrom] = useState<Dayjs | null>(dayjs(dataF));
   const [dataTo, setDataTo] = useState<Dayjs | null>(dayjs(dataT));
-
+  const dinoHOST = process.env.HOST
   useEffect(() => {
     async function getData(fetchString: string) {
       const result = await fetchDataLeader(fetchString);
@@ -45,12 +45,12 @@ const DinoTable = () => {
     }
     const myWalletData = localStorage.getItem("wagmi.store");
     const parsedWalletData = JSON.parse(myWalletData || "{}");
-    const fetchPathRanking = `http://localhost:6060/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
+    const fetchPathRanking = `${dinoHOST}/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
     getData(fetchPathRanking);
   }, [dataF, dataT]);
 
   useEffect(() => {
-    const fetchPath = `http://localhost:6060/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
+    const fetchPath = `${dinoHOST}/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
     async function getData() {
       const result = await fetchData(fetchPath);
       setData(result);

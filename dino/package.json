@@ -15,6 +15,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "dayjs": "^1.11.7",
+    "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
     "moment": "^2.29.4",
     "react": "^18.2.0",
