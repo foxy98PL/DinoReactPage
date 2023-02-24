@@ -45,12 +45,12 @@ const DinoTable = () => {
     }
     const myWalletData = localStorage.getItem("wagmi.store");
     const parsedWalletData = JSON.parse(myWalletData || "{}");
-    const fetchPathRanking = `${dinoHOST}/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
+    const fetchPathRanking = `dinoapi-production.up.railway.app/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
     getData(fetchPathRanking);
   }, [dataF, dataT]);
 
   useEffect(() => {
-    const fetchPath = `${dinoHOST}/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
+    const fetchPath = `dinoapi-production.up.railway.app/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
     async function getData() {
       const result = await fetchData(fetchPath);
       setData(result);
