@@ -31,7 +31,7 @@ const DinoTable = () => {
   );
   const [dataFrom, setDataFrom] = useState<Dayjs | null>(dayjs(dataF));
   const [dataTo, setDataTo] = useState<Dayjs | null>(dayjs(dataT));
-  const dinoHOST = process.env.HOST
+  //const dinoHOST = process.env.HOST
   useEffect(() => {
     async function getData(fetchString: string) {
       const result = await fetchDataLeader(fetchString);
