@@ -61,7 +61,7 @@ module.exports = {
         filename: '[name].js',
         sourceMapFilename: '[name].[contenthash:8].js.map',
         path: path.resolve(__dirname, 'dist'),
-        publicPath: 'https://dinoreactpage-production.up.railway.app',
+        publicPath: 'dinoreactpage-production.up.railway.app',
     },
     stats: "errors-only",
     devtool: 'source-map',
