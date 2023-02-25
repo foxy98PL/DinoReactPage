@@ -3,15 +3,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const InterpolateHtmlPlugin = require('interpolate-html-plugin')
 
 module.exports = {
+  externals: {
+    "react": "React",
+    "react-dom": "ReactDOM",
+},
     mode: 'none',
     entry: {
-        app: path.join(__dirname, 'src', 'index.tsx')
+        app: path.join(__dirname, 'src', 'index.js')
     },
     target: 'web',
     resolve: {
         extensions: ['.ts', '.tsx', '.js']
     },
+    
     module: {
+  
         rules: [
             {
                 test: /\.(ts|js)x?$/,
