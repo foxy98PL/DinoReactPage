@@ -63,6 +63,9 @@ module.exports = {
     },
     stats: "errors-only",
     devtool: 'source-map',
+    devServer: {
+        host: 'https://dinoreactpage-production.up.railway.app'
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public', 'index.html')
