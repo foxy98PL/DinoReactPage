@@ -60,12 +60,11 @@ module.exports = {
     output: {
         filename: '[name].js',
         sourceMapFilename: '[name].[contenthash:8].js.map',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: 'https://dinoreactpage-production.up.railway.app',
     },
     stats: "errors-only",
     devtool: 'source-map',
-    devServer: {
-        host: 'https://dinoreactpage-production.up.railway.app'
-    },
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public', 'index.html')
