@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
 
-    mode: 'none',
+    mode: 'production',
     entry: {
         app: path.join(__dirname, 'src', 'index.tsx')
     },
@@ -65,6 +65,11 @@ module.exports = {
     },
     stats: "errors-only",
     devtool: 'source-map',
+
+    devServer: {
+        host: 'dinoreactpage-production.up.railway.app',
+        port: 3000
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public', 'index.html')
