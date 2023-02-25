@@ -1,77 +1,68 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const InterpolateHtmlPlugin = require('interpolate-html-plugin')
+const InterpolateHtmlPlugin = require('interpolate-html-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  externals: {
-    "react": "React",
-    "react-dom": "ReactDOM",
-},
+
     mode: 'none',
     entry: {
-        app: path.join(__dirname, 'src', 'index.js')
+        app: path.join(__dirname, 'src', 'index.tsx')
     },
     target: 'web',
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js', '.scss']
     },
-    
     module: {
-  
         rules: [
             {
-                test: /\.(ts|js)x?$/,
-                exclude: /node_modules/,
-                use: {
-                  loader: "babel-loader",
-                  options: {
-                    presets: [
-                      "@babel/preset-env",
-                      "@babel/preset-react",
-                      "@babel/preset-typescript",
-                    ],
-                  },
-                },
-            },{
-                test: /\.s[ac]ss$/i,
+                test: /\.(ts|tsx)$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.scss$/,
                 use: [
-                  // Creates `style` nodes from JS strings
-                  "style-loader",
-                  // Translates CSS into CommonJS
-                  "css-loader",
-                  // Compiles Sass to CSS
-                  "sass-loader",
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'sass-loader',
                 ],
-            },{
-                test: /\.(jpe?g|png|gif|svg)$/i, 
-                loader: 'file-loader',
-                options: {
-                  name: '/public/icons/[name].[ext]'
-                }
-            },  {
+            },
+            {
                 test: /\.css$/,
-                use: [ 'style-loader', 'css-loader' ]
-              },
-              { test: /\.txt$/, 
-                use: ['raw-loader'] 
-              },
-              { test: /\.html$/, 
-                use: ['html-loader'] 
-              },
-              {
-                test: /\.(png|svg|jpg|jpeg|gif|ico)$/,
-                exclude: /node_modules/,
-                use: ['file-loader?name=[name].[ext]'] // ?name=[name].[ext] is only necessary to preserve the original file name
-              }
-            
+                use: ['style-loader', 'css-loader'],
+            },
+
+            {
+                test: /\.(png|jpe?g|gif|svg)$/i,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'assets',
+                            publicPath: 'assetsDino',
+                            limit: 8192, // 8KB limit for data URLs
+                        },
+                    },
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'assets',
+                            publicPath: 'assetsDino',
+                        },
+                    },
+                ],
+            },
         ]
     },
     output: {
-      path: path.join(__dirname, 'dist'),
-      filename: "[name].js",
-      sourceMapFilename: "[name].js.map"
+        filename: '[name].js',
+        sourceMapFilename: '[name].[contenthash:8].js.map',
     },
-    devtool: "source-map",
+    stats: "errors-only",
+    devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
             template: path.join(__dirname, 'public', 'index.html')
@@ -79,6 +70,9 @@ module.exports = {
         new InterpolateHtmlPlugin({
             PUBLIC_URL: 'static' // can modify `static` to another name or get it from `process`
         }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[id].css',
+        }),
     ]
-    
 }

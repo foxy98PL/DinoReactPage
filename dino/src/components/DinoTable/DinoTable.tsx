@@ -35,6 +35,7 @@ const DinoTable = () => {
   useEffect(() => {
     async function getData(fetchString: string) {
       const result = await fetchDataLeader(fetchString);
+      console.log(result)
       const walletRanks = result.walletRank.map((rank: WalletRank) => ({
         address: rank.address,
         ethervalue: rank.ethervalue,
@@ -45,12 +46,12 @@ const DinoTable = () => {
     }
     const myWalletData = localStorage.getItem("wagmi.store");
     const parsedWalletData = JSON.parse(myWalletData || "{}");
-    const fetchPathRanking = `dinoapi-production.up.railway.app/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
+    const fetchPathRanking = `https://dinoapi-production.up.railway.app/walletRank?dateFrom=${dataF}&dateTo=${dataT}&walletaddress=${parsedWalletData.state?.data?.account}`;
     getData(fetchPathRanking);
   }, [dataF, dataT]);
 
   useEffect(() => {
-    const fetchPath = `dinoapi-production.up.railway.app/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
+    const fetchPath = `https://dinoapi-production.up.railway.app/transactions?dateFrom=${dataF}&dateTo=${dataT}`;
     async function getData() {
       const result = await fetchData(fetchPath);
       setData(result);
