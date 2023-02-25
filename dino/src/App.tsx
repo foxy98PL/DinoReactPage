@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import DinoTable from "./components/DinoTable/DinoTable";
 import Footer from "./components/Footer/Footer";

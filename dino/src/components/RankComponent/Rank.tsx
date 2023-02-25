@@ -1,7 +1,6 @@
 import React from "react";
 import "./Rank.scss";
 import { RankModel } from "./model";
-import ReactDOM from "react-dom";
 const Rank: React.FC<RankModel> = ({ score }) => {
   enum Color {
     gold = "#fec833",
